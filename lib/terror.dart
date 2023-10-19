@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:peliculas/home_screen.dart';
-import 'package:peliculas/comedia.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:peliculas/romance.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(const Terror());
 
 class Terror extends StatelessWidget {
   static String id = 'Terror';
   const Terror({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,22 +19,53 @@ class Terror extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 26, 80, 107),
           title: Text('Terror'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                // Aquí puedes agregar la lógica para la búsqueda
+              },
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  OvalButton(
-                    text: 'All',
-                    color: Color.fromRGBO(128, 128, 128, 0.7),
-                  ),
-                ],
+              CarouselSlider(
+                options: CarouselOptions(
+                  height: 200.0,
+                  enlargeCenterPage: true,
+                  autoPlay: true,
+                ),
+                items: movies.map((movie) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return InkWell(
+                        onTap: () {
+                          // Abre el video de YouTube al tocar la imagen
+                          launchYouTubeVideo(movie['youtubeVideoUrl']!);
+                        },
+                        child: Image.asset(
+                          movie['imageAsset']!, // Ruta de la imagen en tu PC
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
               ),
-              SizedBox(height: 20.0),
-              // Aquí puedes agregar contenido adicional al body
+              SizedBox(
+                  height: 20.0), // Espacio entre el carrusel y las tarjetas
+              // Tarjetas de películas
+              Column(
+                children: movies.map((movie) {
+                  return MovieCard(
+                    title: movie['title']!,
+                    imageAsset: movie['imageAsset']!,
+                    youtubeVideoUrl: movie['youtubeVideoUrl']!,
+                  );
+                }).toList(),
+              ),
             ],
           ),
         ),
@@ -43,88 +75,64 @@ class Terror extends StatelessWidget {
   }
 }
 
-class OvalButton extends StatelessWidget {
-  final String text;
-  final Color color;
+class MovieCard extends StatelessWidget {
+  final String title;
+  final String imageAsset;
+  final String youtubeVideoUrl;
 
-  const OvalButton({
-    required this.text,
-    required this.color,
+  MovieCard({
+    required this.title,
+    required this.imageAsset,
+    required this.youtubeVideoUrl,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        primary: color, // Color de fondo
-      ),
-      child: Text(text),
-    );
-  }
-}
-
-class BottomIcons extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Color.fromRGBO(38, 31, 31, 0.7),
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(30.0),
-        ),
-      ),
-      height: 90.0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          //home
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
-              );
-            },
-            child: Icon(
-              Icons.home,
-              color: Colors.white,
+    return GestureDetector(
+      onTap: () {
+        launchYouTubeVideo(youtubeVideoUrl);
+      },
+      child: Card(
+        color: Color.fromARGB(255, 26, 80, 107), // Color del fondo
+        child: Column(
+          children: <Widget>[
+            Image.asset(imageAsset, width: 150, height: 200, fit: BoxFit.cover),
+            ListTile(
+              title: Text(
+                title,
+                style: TextStyle(color: Colors.white), // Color del texto
+              ),
             ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Romance()),
-              );
-            },
-            child: Icon(Icons.rowing, color: Colors.white),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Comedia()),
-              );
-            },
-            child: Icon(Icons.catching_pokemon, color: Colors.white),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Terror()),
-              );
-            },
-            child: Icon(Icons.terrain_rounded, color: Colors.white),
-          ),
-
-          //noficications
-        ],
+          ],
+        ),
       ),
     );
   }
 }
+
+void launchYouTubeVideo(String videoUrl) async {
+  if (await canLaunch(videoUrl)) {
+    await launch(videoUrl);
+  } else {
+    // No se puede abrir la URL
+  }
+}
+
+final List<Map<String, String>> movies = [
+  {
+    'title': 'FIVE NIGHTS AT FREDDY',
+    'imageAsset': 'assets/img/fnaf.jpg', // Ruta de la imagen en tu PC
+    'youtubeVideoUrl': 'https://youtu.be/IJD1VktHJSw',
+  },
+  {
+    'title': 'Evil Dead: El Despertar',
+    'imageAsset': 'assets/img/despertar.jpg', // Ruta de la imagen en tu PC
+    'youtubeVideoUrl': 'https://youtu.be/qrl1JWv4df8',
+  },
+  {
+    'title': 'Háblame',
+    'imageAsset': 'assets/img/descarga.jpg', // Ruta de la imagen en tu PC
+    'youtubeVideoUrl': 'https://youtu.be/kMOk2xrbuOo',
+  },
+  // Agrega más películas aquí
+];
