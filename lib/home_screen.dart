@@ -15,9 +15,9 @@ class HomeScreen extends StatelessWidget {
       title: 'Material App',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Color.fromARGB(255, 72, 165, 144),
+        backgroundColor: Color.fromARGB(255, 26, 80, 107),
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 72, 165, 144),
+          backgroundColor: Color.fromARGB(255, 26, 80, 107),
           title: Text('Peliculas'),
           actions: [
             IconButton(

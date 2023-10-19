@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:peliculas/home_screen.dart';
+import 'package:peliculas/comedia.dart';
+import 'package:peliculas/romance.dart';
 
 void main() => runApp(const Terror());
 
@@ -12,9 +14,9 @@ class Terror extends StatelessWidget {
       title: 'Material App',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Color.fromARGB(255, 72, 165, 144),
+        backgroundColor: Color.fromARGB(255, 26, 80, 107),
         appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 72, 165, 144),
+          backgroundColor: Color.fromARGB(255, 26, 80, 107),
           title: Text('Terror'),
         ),
         body: SingleChildScrollView(
@@ -92,6 +94,34 @@ class BottomIcons extends StatelessWidget {
               color: Colors.white,
             ),
           ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Romance()),
+              );
+            },
+            child: Icon(Icons.rowing, color: Colors.white),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Comedia()),
+              );
+            },
+            child: Icon(Icons.catching_pokemon, color: Colors.white),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Terror()),
+              );
+            },
+            child: Icon(Icons.terrain_rounded, color: Colors.white),
+          ),
+
           //noficications
         ],
       ),
